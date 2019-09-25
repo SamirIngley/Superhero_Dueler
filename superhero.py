@@ -11,7 +11,6 @@ class Ability:
     def attack(self):
         return random.randint(0, self.max_damage)
 
-
 class Armor:
     def __init__(self, name, max_block):
         self.name = name
@@ -20,8 +19,16 @@ class Armor:
     def block(self):
         return random.randint(0, self.max_block)
 
+class Weapons(Ability):
+    def __init__(self, name, max_damage):
+        self.name = name
+        self.max_damage = max_damage
+    def attack(self):
+        return random.randint((self.max_damage/20), (self.max_damage - 20))
+
+
 class Hero:
-    def __init__(self, name, starting_health):
+    def __init__(self, name, starting_health=200):
         '''Instance properties:
           abilities: List
           armors: List
@@ -40,7 +47,7 @@ class Hero:
 
     def attack(self):
         for ability in self.abilities:
-            print(f' Ability: {ability.name}')
+            #print(f' Ability: {ability.name}')
             return ability.attack()
 
     def add_armor(self, armor):
@@ -77,30 +84,64 @@ class Hero:
         else:
             print(f"{self.name} won!")
 
+class Team:
+    def __init__(self, team_name, heroes_list):
+        self.team_name = team_name
+        self.heroes_list = heroes_list
+
+    def add_hero(self, hero_name):
+        self.heroname = heroname
+
+
+    def remove_hero(self, name):
+        self.name = name
+
+    def viewallheroes():
+        print(heroes_list)
+        return
+
+    
+
+
+
+
+
 
 
 
 if __name__ == "__main__":
 
-    SuperMan = Hero("SuperMan", 200)
-    print(f" Name: {SuperMan.name}")
-    print(f" Health: {SuperMan.current_health}")
+    # SuperMan = Hero("SuperMan", 200)
+    # print(f" Name: {SuperMan.name}")
+    # print(f" Health: {SuperMan.current_health}")
+    #
+    # lazereyes = Ability("lazer 👁", 100)
+    # SuperMan.add_ability(lazereyes)
+    #
+    # steelbody = Armor("steelbody  🦹🏾‍♂️", 100)
+    # SuperMan.add_armor(steelbody)
+    #
+    # print(f' Defense Power: {SuperMan.defend()}')
+    # print(f' Ability power : {SuperMan.attack()}')
+    #
+    # SuperMan.take_damage(59)
+    # print(f' current health: {SuperMan.current_health}')
+    #
+    # SuperMan.take_damage(120)
+    # print(SuperMan.is_alive())
+    # SuperMan.take_damage(300)
+    # print(SuperMan.is_alive())
+    #
+    # SuperMan.fight('yourmom')
 
-    lazereyes = Ability("lazer 👁", 100)
-    SuperMan.add_ability(lazereyes)
-
-    steelbody = Armor("steelbody  🦹🏾‍♂️", 100)
-    SuperMan.add_armor(steelbody)
-
-    print(f' Defense Power: {SuperMan.defend()}')
-    print(f' Ability power : {SuperMan.attack()}')
-
-    SuperMan.take_damage(59)
-    print(f' current health: {SuperMan.current_health}')
-
-    SuperMan.take_damage(120)
-    print(SuperMan.is_alive())
-    SuperMan.take_damage(300)
-    print(SuperMan.is_alive())
-
-    SuperMan.fight(yourmom)
+    hero1 = Hero("Wonder Woman")
+    hero2 = Hero("Dumbledore")
+    ability1 = Ability("Super Speed", 300)
+    ability2 = Ability("Super Eyes", 130)
+    ability3 = Ability("Wizard Wand", 80)
+    ability4 = Ability("Wizard Beard", 20)
+    hero1.add_ability(ability1)
+    hero1.add_ability(ability2)
+    hero2.add_ability(ability3)
+    hero2.add_ability(ability4)
+    hero1.fight(hero2)
