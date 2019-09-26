@@ -39,16 +39,23 @@ class Hero:
         self.name = name
         self.abilities = list()
         self.armors = list()
+        self.weapons = list()
         self.current_health = starting_health
         self.starting_health = starting_health
 
     def add_ability(self, ability):
         self.abilities.append(ability)
 
+    def add_weapon(self, weapon):
+        self.weapon.append(weapon)
+
     def attack(self):
         for ability in self.abilities:
             #print(f' Ability: {ability.name}')
             return ability.attack()
+
+        for weapon in self.weapons:
+            return weapon.attack()
 
     def add_armor(self, armor):
         self.armors.append(armor)
@@ -85,26 +92,24 @@ class Hero:
             print(f"{self.name} won!")
 
 class Team:
-    def __init__(self, team_name):
-        self.team_name = team_name
-        self.heroes_list = []
+    def __init__(self, name):
+        self.name = name
+        self.heroes = []
 
     def add_hero(self, hero):
-        self.hero = hero
-        self.heroes_list.append(self.hero)
+        self.heroes = hero
+        self.heroes.append(hero)
 
     def remove_hero(self, name):
-        for hero in self.heroes_list:
+        for hero in self.heroes:
             if hero.name == name:
-                self.hero_list.remove(hero)
+                self.heroes.remove(hero)
             else:
                 print("He's not part of this team!")
             return
 
-
-
     def viewallheroes():
-        print(heroes_list)
+        print(self.heroes)
         return
 
 
@@ -115,9 +120,9 @@ class Team:
 
 
 
-
-if __name__ == "__main__":
-
+#
+# if __name__ == "__main__":
+#
     # SuperMan = Hero("SuperMan", 200)
     # print(f" Name: {SuperMan.name}")
     # print(f" Health: {SuperMan.current_health}")
@@ -140,15 +145,16 @@ if __name__ == "__main__":
     # print(SuperMan.is_alive())
     #
     # SuperMan.fight('yourmom')
-
-    hero1 = Hero("Wonder Woman")
-    hero2 = Hero("Dumbledore")
-    ability1 = Ability("Super Speed", 300)
-    ability2 = Ability("Super Eyes", 130)
-    ability3 = Ability("Wizard Wand", 80)
-    ability4 = Ability("Wizard Beard", 20)
-    hero1.add_ability(ability1)
-    hero1.add_ability(ability2)
-    hero2.add_ability(ability3)
-    hero2.add_ability(ability4)
-    hero1.fight(hero2)
+    #
+    # hero1 = Hero("Wonder Woman")
+    # hero2 = Hero("Dumbledore")
+    # ability1 = Ability("Super Speed", 300)
+    # ability2 = Ability("Super Eyes", 130)
+    # ability3 = Ability("Wizard Wand", 80)
+    # ability4 = Ability("Wizard Beard", 20)
+    # hero1.add_ability(ability1)
+    # hero1.add_ability(ability2)
+    # hero2.add_ability(ability3)
+    # hero2.add_ability(ability4)
+    #
+    # hero1.fight(hero2)
