@@ -39,7 +39,6 @@ class Hero:
         self.name = name
         self.abilities = list()
         self.armors = list()
-        self.weapons = list()
         self.current_health = starting_health
         self.starting_health = starting_health
 
@@ -50,12 +49,11 @@ class Hero:
         self.weapons.append(weapon)
 
     def attack(self):
+        total_attack = 0
         for ability in self.abilities:
             #print(f' Ability: {ability.name}')
-            return ability.attack()
-
-        for weapon in self.weapons:
-            return weapon.attack()
+            total_attack += ability.attack()
+        return total_attack
 
     def add_armor(self, armor):
         self.armors.append(armor)
@@ -103,9 +101,7 @@ class Team:
         for hero in self.heroes:
             if hero.name == name:
                 self.heroes.remove(hero)
-            else:
-                print("He's not part of this team!")
-            return self.heroes
+                return
         return 0
 
     def view_all_heroes(self):
