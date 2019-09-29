@@ -19,12 +19,12 @@ class Armor:
     def block(self):
         return random.randint(0, self.max_block)
 
-class Weapons(Ability):
+class Weapon(Ability):
     def __init__(self, name, max_damage):
         self.name = name
         self.max_damage = max_damage
     def attack(self):
-        return random.randint((self.max_damage/20), (self.max_damage - 20))
+        return random.randint((self.max_damage/2), (self.max_damage))
 
 
 class Hero:
@@ -47,7 +47,7 @@ class Hero:
         self.abilities.append(ability)
 
     def add_weapon(self, weapon):
-        self.weapon.append(weapon)
+        self.weapons.append(weapon)
 
     def attack(self):
         for ability in self.abilities:
@@ -97,7 +97,6 @@ class Team:
         self.heroes = []
 
     def add_hero(self, hero):
-        self.heroes = hero
         self.heroes.append(hero)
 
     def remove_hero(self, name):
@@ -106,11 +105,13 @@ class Team:
                 self.heroes.remove(hero)
             else:
                 print("He's not part of this team!")
-            return
+            return self.heroes
+        return 0
 
-    def viewallheroes():
-        print(self.heroes)
-        return
+    def view_all_heroes(self):
+        for hero in self.heroes:
+            print(hero.name)
+
 
 
 
