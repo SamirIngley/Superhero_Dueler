@@ -184,7 +184,7 @@ class Team:
             total_kills += hero.kills
             total_deaths += hero.deaths
         if total_deaths == 0:
-            kdr = total_deaths
+            kdr = total_kills
         else:
             kdr = total_kills/total_deaths
         return kdr
