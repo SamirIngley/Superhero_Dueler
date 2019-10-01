@@ -28,7 +28,7 @@ class Weapon(Ability):
 
 
 class Hero:
-    def __init__(self, name, starting_health=200):
+    def __init__(self, name, starting_health=100):
         '''Instance properties:
           abilities: List
           armors: List
@@ -52,23 +52,25 @@ class Hero:
         self.abilities.append(weapon)
 
     def attack(self):
-
+        total_damage = 0
         for ability in self.abilities:
-            #print(f' Ability: {ability.name}')
-            return ability.attack()
-
+            damage = ability.attack()
+            total_damage += damage
+        return total_damage
 
     def add_armor(self, armor):
         self.armors.append(armor)
 
-    def defend(self):
+    def defend(self, damage_amt=0):
+        total_defense = 0
         for armor in self.armors:
-            print(f' Defense: {armor.name}')
-            return armor.block()
+            block = armor.block()
+            total_defense += block
+        return abs(total_defense - damage_amt)
 
     def take_damage(self, incoming_damage):
-        damage = int(incoming_damage)
-        self.current_health -= damage
+        taken_damage = self.defend(incoming_damage)
+        self.current_health -= taken_damage
 
     def is_alive(self):
         if self.current_health > 0:
@@ -95,15 +97,16 @@ class Hero:
             opponent.take_damage(first_attack)
             self.take_damage(opponent_attack)
 
-        if self.is_alive() == False and opponent.is_alive() == False:
-            print("Stalemate!")
-        elif self.is_alive() == False:
-            print(f"{opponent.name} won!")
-            add_deaths(1)
-        else:
+        if self.is_alive() and opponent.is_alive() == False:
             print(f"{self.name} won!")
-            add_kill(1)
-
+            opponent.add_deaths(1)
+            self.add_kill(1)
+        elif self.is_alive() == False and opponent.is_alive():
+            print(f"{opponent.name} won!")
+            self.add_deaths(1)
+            opponent.add_kills(1)
+        else:
+            print("Stalemate!")
 class Team:
     def __init__(self, name):
         self.name = name
@@ -126,35 +129,46 @@ class Team:
             print(hero.name)
 
     def attack(self, other_team):
-        fighting = True
-        team_one = []
-        team_two = []
+        # fighting = True
+        # team_one = []
+        # team_two = []
+        #
+        # while fighting:
+        #     # team_one.clear()
+        #     # team_two.clear()
+        #     for hero in self.heroes:
+        #         print("self hero", hero)
+        #         if hero.is_alive():
+        #             team_one.append(hero)
+        #     for hero in other_team.heroes:
+        #         print("other hero", hero)
+        #         if hero.is_alive():
+        #             team_two.append(hero)
+        #     if len(team_one) <= 0 or len(team_two) <= 0:
+        #         fighting = False
+        #     else:
+        #         hero_one = random.choice(team_one)
+        #         hero_two = random.choice(team_two)
+        #         hero_one.fight(hero_two)
 
-        while fighting:
-            team_one.clear()
-            team_two.clear()
-            for hero in self.heroes:
-                print("self hero", hero)
-                # if hero.is_alive():
-                #     team_one.append(hero)
-            for hero in other_team.heroes:
-                print("other hero", hero)
-                # if hero.is_alive():
-                #     team_two.append(hero)
-            if len(team_one) <= 0 or len(team_two) <= 0:
-                fighting = False
-            else:
-                hero_one = choice(team_one)
-                hero_two = choice(team_two)
-                hero_one.fight(hero_two)
-
-        # your_hero = self.heroes[random.randint(0, (len (self.heroes))-1)]
-        # opponent_hero = self.heroes[random.randint(0, (len(other_team.heroes))-1)]
-        # your_hero.fight(opponent_hero)
+        your_hero = self.heroes[0]
+        opponent_hero = other_team.heroes[0]
+        your_hero.fight(opponent_hero)
 
     def revive_heroes(self, health=100):
         for hero in self.heroes:
             hero.current_health = health
+
+    def team_dead(self, teamAlive):
+        teamDeaths = 0
+        for hero in teamAlive:
+            if hero.current_health == 0:
+                teamDeaths += 1
+        if teamDeaths == len(teamAlive):
+            return True
+        else:
+            return False
+
 
     def stats(self):
         # total_kills = 0
@@ -166,7 +180,12 @@ class Team:
         total_kills = 0
         total_deaths = 0
         kdr = 0
+        print("list of heroes", self.heroes)
+        print("list of heroes", self)
         for hero in self.heroes:
+            print("hero", hero)
+            print("hero kills", hero.kills)
+
             total_kills += hero.kills
             total_deaths += hero.deaths
         if total_deaths == 0:
@@ -175,15 +194,10 @@ class Team:
             kdr = total_kills/total_deaths
         return kdr
 
-
-
-
-
-
 class Arena:
     def __init__(self):
-        self.team_one: []
-        self.team_two: []
+        self.team_one = None
+        self.team_two = None
 
     def create_ability(self):
         name = input("What's the ability's name? ")
@@ -205,84 +219,142 @@ class Arena:
 
     def create_hero(self):
         name = input("Hero name? ")
-        new_Hero = Hero(name, starting_health = 200)
+        new_Hero = Hero(name)
+        print(new_Hero)
 
-        ability = input("Add abilities? Y/N ")
-        if ability.lower() == "y":
-            new_Hero.add_ability(self.create_ability())
+        abilitying = True
+        while abilitying == True:
+            ability = input("Add abilities? Y/N ")
+            if ability.lower() == "y":
+                new_Hero.add_ability(self.create_ability())
+            else:
+                abilitying = False
 
-        weapon = input("Add weapons? Y/N ")
-        if weapon.lower() == "y":
-            new_Hero.add_weapon(self.create_weapon())
+        weaponing = True
+        while weaponing == True:
+            weapon = input("Add weapons? Y/N ")
+            if weapon.lower() == "y":
+                new_Hero.add_weapon(self.create_weapon())
+            else:
+                weaponing = False
 
-        armor = input("Add armor? Y/N")
-        if armor.lower() == "y":
-            new_Hero.add_armor(self.create_armor())
+        armoring = True
+        while armoring == True:
+            armor = input("Add armor? Y/N")
+            if armor.lower() == "y":
+                new_Hero.add_armor(self.create_armor())
+            else:
+                armoring = False
+        return new_Hero
 
     def build_team_one(self):
         team_name = input("Team 1 Name: ")
-        self.team_one = Team(team_name)
+        team_one = Team(team_name)
+        print("team one in build", team_one)
         num_heroes = int(input("How many heroes on team 1? "))
         for amount in range (num_heroes):
             Hero = self.create_hero()
             print(Hero)
-            self.team_one.append(Hero)
+            team_one.add_hero(Hero)
+        self.team_one = team_one
 
     def build_team_two(self):
         team_name = input("Team 2 Name: ")
-        self.team_two = Team(team_name)
+        team_two = Team(team_name)
+        print("team two in build", team_two)
         num_heroes = int(input("How many heroes on team 2? "))
         for amount in range (num_heroes):
             Hero = self.create_hero()
             print(Hero)
-            self.team_two.append(Hero)
+            team_two.add_hero(Hero)
+        self.team_two = team_two
 
     def team_battle(self):
         self.team_one.attack(self.team_two)
 
-    def show_stats(self):
-        print('Team One stats:')
-        print(self.team_one.stats)
-        print('Team Two stats:')
-        print(self.team_two.stats)
 
-        if (self.team_one.stats > self.team_two.stats):
-            print(f'{self.team_one} won!')
-        elif (self.team_one.stats < self.team_two.stats):
-            print(f'{self.team_two} won!')
+    def team_dead(self, teamAlive):
+        teamDeaths = 0
+        print(teamAlive)
+        for hero in teamAlive:
+            print(hero)
+            if hero.current_health == 0:
+                teamDeaths += 1
+        if teamDeaths == len(teamAlive):
+            return True
         else:
-            print('Draw Match!')
+            return False
 
-        team_one_raw_kdr = 0
-        team_one_alive_count = 0
-        team_one_alive_names = list()
-        for hero in self.team_one.heroes:
-            raw_kdr += self.team_one.stats
-            if hero.isalive():
-                team_one_alive += 1
-                team_one_alive_names.append(hero.name)
+    def show_stats(self):
+        print(self.team_one.heroes)
+        print(self.team_two.heroes)
+        teamA = self.team_dead(self.team_one.heroes)
+        teamB = self.team_dead(self.team_two.heroes)
 
-        team_two_raw_kdr = 0
-        team_two_alive_count = 0
-        team_two_alive_names = list()
-        for hero in self.team_two.heroes:
-            raw_kdr += self.team_one.stats
-            if hero.isalive():
-                team_two_alive += 1
-                team_two_alive_names.append(hero.name)
+        if teamA == False:
+            print(f"Victor is Team {self.team_one.name}")
+            print("The Survivors are: ")
+            for hero in self.team_one.heroes:
+                if hero.is_alive():
+                    print(hero.name)
+        elif teamB == False:
+            print(f"Victor is Team {self.team_two.name}")
+            print("The Survivors are: ")
+            for hero in self.team_two.heroes:
+                if hero.is_alive():
+                    print(hero.name)
+                else:
+                    print("None bro, all my friends are dead")
+        elif teamA == False and teamB == False:
+            print("DRAW!")
 
-        team_one_overall_kd = team_one.stats / team_one.num_heroes
-        team_two_overall_kd = team_two.stats / team_two.num_heroes
+        print(f'Team One KDR: {self.team_one.stats()}')
+        print(f'Team Two KDR: {self.team_two.stats()}')
 
-        print('Team One Survivors:')
-        for name in team_one_alive_names:
-            print(name)
-
-        print('Team Two Survivors')
-        for name in team_two_alive_names:
-            print(name)
-
-
+    #
+    # def show_stats(self):
+    #     print('Team One stats:')
+    #     print(self.team_one)
+    #     self.team_one.stats()
+    #     print('Team Two stats:')
+    #     print(self.team_two)
+    #     print(self.team_two.stats())
+    #
+    #     # if (team_one.stats > team_two.stats) == True:
+    #     #     print(f'{team_one} won!')
+    #     # elif (team_one.stats < team_two.stats):
+    #     #     print(f'{team_two} won!')
+    #     # else:
+    #     #     print('Draw Match!')
+    #
+    #     team_one_raw_kdr = 0
+    #     team_one_alive_count = 0
+    #     team_one_alive_names = list()
+    #     for hero in self.team_one.heroes:
+    #         if hero.isalive():
+    #             team_one_alive += 1
+    #             team_one_alive_names.append(hero.name)
+    #
+    #     team_two_raw_kdr = 0
+    #     team_two_alive_count = 0
+    #     team_two_alive_names = list()
+    #     for hero in team_two.heroes:
+    #         if hero.isalive():
+    #             team_two_alive += 1
+    #             team_two_alive_names.append(hero.name)
+    #
+    #     team_one_overall_kd = team_one.stats / team_one.num_heroes
+    #     team_two_overall_kd = team_two.stats / team_two.num_heroes
+    #
+    #     print('Team One Survivors:')
+    #     for name in team_one_alive_names:
+    #         print(name)
+    #
+    #     print('Team Two Survivors')
+    #     for name in team_two_alive_names:
+    #         print(name)
+    #
+    #
 
 
 #
